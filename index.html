@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="fa">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>روح کوچولو</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        body {
+            background: #000;
+            overflow: hidden;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Ghost Character */
+        .ghost {
+            position: absolute;
+            width: 60px;
+            height: 80px;
+            transition: all 0.1s ease-out;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        .ghost-body {
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, rgba(255,255,255,0.9) 0%, rgba(200,200,255,0.7) 100%);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+            position: relative;
+            animation: float 2s ease-in-out infinite;
+            box-shadow: 0 0 20px rgba(255,255,255,0.5), 
+                        0 0 40px rgba(200,200,255,0.3),
+                        inset 0 0 20px rgba(255,255,255,0.2);
+        }
+
+        .ghost-tail {
+            position: absolute;
+            bottom: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50px;
+            height: 25px;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.8), transparent);
+            border-radius: 0 0 50% 50%;
+            animation: wave 1.5s ease-in-out infinite;
+        }
+
+        .ghost-tail::before,
+        .ghost-tail::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            width: 15px;
+            height: 15px;
+            background: rgba(255,255,255,0.6);
+            border-radius: 50%;
+            animation: tailWave 1.8s ease-in-out infinite;
+        }
+
+        .ghost-tail::before {
+            left: 5px;
+            animation-delay: 0.2s;
+        }
+
+        .ghost-tail::after {
+            right: 5px;
+            animation-delay: 0.4s;
+        }
+
+        .ghost-eyes {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+        }
+
+        .eye {
+            width: 8px;
+            height: 12px;
+            background: #000;
+            border-radius: 50%;
+            animation: blink 3s infinite;
+        }
+
+        .ghost-mouth {
+            position: absolute;
+            top: 35px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 6px;
+            background: #000;
+            border-radius: 50%;
+            animation: smile 2.5s ease-in-out infinite;
+        }
+
+        /* Trail Effect */
+        .trail {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: trailFade 1s ease-out forwards;
+        }
+
+        /* Particle Effects */
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particleFloat 2s ease-out forwards;
+        }
+
+        /* Magic Sparkles */
+        .sparkle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: #fff;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: sparkleAnim 1.5s ease-out forwards;
+        }
+
+        /* Background Stars */
+        .star {
+            position: absolute;
+            background: #fff;
+            border-radius: 50%;
+            animation: twinkle 2s ease-in-out infinite;
+        }
+
+        /* Animations */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
+
+        @keyframes wave {
+            0%, 100% { transform: translateX(-50%) scaleY(1); }
+            50% { transform: translateX(-50%) scaleY(0.8); }
+        }
+
+        @keyframes tailWave {
+            0%, 100% { transform: translateY(0px); opacity: 0.6; }
+            50% { transform: translateY(-5px); opacity: 0.8; }
+        }
+
+        @keyframes blink {
+            0%, 90%, 100% { transform: scaleY(1); }
+            95% { transform: scaleY(0.1); }
+        }
+
+        @keyframes smile {
+            0%, 100% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.2); }
+        }
+
+        @keyframes trailFade {
+            0% {
+                opacity: 0.8;
+                transform: scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0.2);
+            }
+        }
+
+        @keyframes particleFloat {
+            0% {
+                opacity: 1;
+                transform: translateY(0px) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.5);
+            }
+        }
+
+        @keyframes sparkleAnim {
+            0% {
+                opacity: 0;
+                transform: scale(0) rotate(0deg);
+            }
+            50% {
+                opacity: 1;
+                transform: scale(1) rotate(180deg);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0) rotate(360deg);
+            }
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* Instructions */
+        .instructions {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            color: rgba(255,255,255,0.7);
+            font-size: 14px;
+            z-index: 200;
+            animation: fadeInOut 4s ease-in-out infinite;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.8; }
+        }
+
+        /* Magic Circle */
+        .magic-circle {
+            position: absolute;
+            border: 2px solid rgba(138, 43, 226, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: magicRotate 3s linear infinite;
+        }
+
+        @keyframes magicRotate {
+            0% { transform: rotate(0deg) scale(0.8); opacity: 0.3; }
+            50% { transform: rotate(180deg) scale(1.2); opacity: 0.6; }
+            100% { transform: rotate(360deg) scale(0.8); opacity: 0.3; }
+        }
+    </style>
+</head>
+<body>
+    
+
+    <div class="ghost" id="ghost">
+        <div class="ghost-body">
+            <div class="ghost-eyes">
+                <div class="eye"></div>
+                <div class="eye"></div>
+            </div>
+            <div class="ghost-mouth"></div>
+        </div>
+        <div class="ghost-tail"></div>
+    </div>
+
+    <script>
+        const ghost = document.getElementById('ghost');
+        const body = document.body;
+        
+        let mouseX = window.innerWidth / 2;
+        let mouseY = window.innerHeight / 2;
+        let ghostX = mouseX;
+        let ghostY = mouseY;
+        
+        const trails = [];
+        const maxTrails = 20;
+        
+        // Purple gradient colors for trail
+        const trailColors = [
+            'rgba(138, 43, 226, 0.8)',   // BlueViolet
+            'rgba(147, 112, 219, 0.7)',  // MediumSlateBlue  
+            'rgba(186, 85, 211, 0.6)',   // MediumOrchid
+            'rgba(221, 160, 221, 0.5)',  // Plum
+            'rgba(238, 130, 238, 0.4)',  // Violet
+            'rgba(255, 192, 203, 0.3)'   // Pink
+        ];
+
+        // Create background stars
+        function createStars() {
+            for (let i = 0; i < 100; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = Math.random() * 3 + 1 + 'px';
+                star.style.height = star.style.width;
+                star.style.animationDelay = Math.random() * 2 + 's';
+                star.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                body.appendChild(star);
+            }
+        }
+
+        // Mouse movement handler
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        // Create trail particle
+        function createTrail(x, y) {
+            const trail = document.createElement('div');
+            trail.className = 'trail';
+            trail.style.left = x + 'px';
+            trail.style.top = y + 'px';
+            trail.style.background = trailColors[Math.floor(Math.random() * trailColors.length)];
+            trail.style.boxShadow = `0 0 10px ${trailColors[Math.floor(Math.random() * trailColors.length)]}`;
+            
+            body.appendChild(trail);
+            
+            setTimeout(() => {
+                if (trail.parentNode) {
+                    trail.parentNode.removeChild(trail);
+                }
+            }, 1000);
+        }
+
+        // Create magical particles
+        function createParticle(x, y) {
+            const particle = document.createElement('div');
+            particle.className = 'particle';
+            particle.style.left = x + Math.random() * 40 - 20 + 'px';
+            particle.style.top = y + Math.random() * 40 - 20 + 'px';
+            particle.style.background = trailColors[Math.floor(Math.random() * trailColors.length)];
+            particle.style.boxShadow = `0 0 8px ${trailColors[Math.floor(Math.random() * trailColors.length)]}`;
+            
+            body.appendChild(particle);
+            
+            setTimeout(() => {
+                if (particle.parentNode) {
+                    particle.parentNode.removeChild(particle);
+                }
+            }, 2000);
+        }
+
+        // Create sparkles
+        function createSparkle(x, y) {
+            const sparkle = document.createElement('div');
+            sparkle.className = 'sparkle';
+            sparkle.style.left = x + Math.random() * 60 - 30 + 'px';
+            sparkle.style.top = y + Math.random() * 60 - 30 + 'px';
+            sparkle.style.animationDelay = Math.random() * 0.5 + 's';
+            
+            body.appendChild(sparkle);
+            
+            setTimeout(() => {
+                if (sparkle.parentNode) {
+                    sparkle.parentNode.removeChild(sparkle);
+                }
+            }, 1500);
+        }
+
+        // Create magic circle around ghost
+        function createMagicCircle(x, y) {
+            const circle = document.createElement('div');
+            circle.className = 'magic-circle';
+            const size = 80 + Math.random() * 40;
+            circle.style.width = size + 'px';
+            circle.style.height = size + 'px';
+            circle.style.left = (x - size/2) + 'px';
+            circle.style.top = (y - size/2) + 'px';
+            circle.style.animationDuration = (2 + Math.random() * 2) + 's';
+            
+            body.appendChild(circle);
+            
+            setTimeout(() => {
+                if (circle.parentNode) {
+                    circle.parentNode.removeChild(circle);
+                }
+            }, 3000);
+        }
+
+        // Animation loop
+        let frameCount = 0;
+        function animate() {
+            // Smooth ghost movement
+            const dx = mouseX - ghostX;
+            const dy = mouseY - ghostY;
+            ghostX += dx * 0.1;
+            ghostY += dy * 0.1;
+            
+            ghost.style.left = (ghostX - 30) + 'px';
+            ghost.style.top = (ghostY - 40) + 'px';
+            
+            // Add rotation based on movement direction
+            const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+            ghost.style.transform = `rotate(${angle * 0.1}deg)`;
+            
+            // Create effects every few frames
+            frameCount++;
+            
+            if (frameCount % 3 === 0) {
+                createTrail(ghostX, ghostY);
+            }
+            
+            if (frameCount % 8 === 0) {
+                createParticle(ghostX, ghostY);
+            }
+            
+            if (frameCount % 12 === 0) {
+                createSparkle(ghostX, ghostY);
+            }
+            
+            if (frameCount % 60 === 0) {
+                createMagicCircle(ghostX, ghostY);
+            }
+            
+            requestAnimationFrame(animate);
+        }
+
+        // Initialize
+        createStars();
+        animate();
+
+        // Add click effect
+        document.addEventListener('click', (e) => {
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    createSparkle(e.clientX, e.clientY);
+                    createParticle(e.clientX, e.clientY);
+                }, i * 100);
+            }
+            createMagicCircle(e.clientX, e.clientY);
+        });
+
+        // Fullscreen on F11 or double click
+        document.addEventListener('dblclick', () => {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                document.exitFullscreen();
+            }
+        });
+
+        // Add some random magic effects
+        setInterval(() => {
+            const x = Math.random() * window.innerWidth;
+            const y = Math.random() * window.innerHeight;
+            if (Math.random() > 0.7) {
+                createSparkle(x, y);
+            }
+        }, 2000);
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'95e2dfa396be2c45',t:'MTc1MjM0Nzc3MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
